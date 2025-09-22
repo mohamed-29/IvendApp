@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,8 +23,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _dashboardStats = _fetchDashboardStats();
-    _machines = _fetchMachines();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    setState(() {
+      _dashboardStats = _fetchDashboardStats();
+      _machines = _fetchMachines();
+    });
   }
 
   Future<DashboardStats> _fetchDashboardStats() async {
@@ -63,12 +68,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async {
-          setState(() {
-            _dashboardStats = _fetchDashboardStats();
-            _machines = _fetchMachines();
-          });
-        },
+        onRefresh: _loadData,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -329,3 +329,4 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
+

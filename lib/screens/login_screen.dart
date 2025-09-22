@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:myapp/api/api_service.dart';
 import 'package:myapp/providers/auth_provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,10 +24,25 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    // FIX: Changed .contains to == for compatibility with older connectivity_plus versions
+    if (connectivityResult == ConnectivityResult.none) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to connect. No internet connection.')),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
     final tokens = await _apiService.login(
       _usernameController.text,
       _passwordController.text,
     );
+
+    if (!mounted) return;
 
     setState(() {
       _isLoading = false;
@@ -36,13 +51,15 @@ class _LoginScreenState extends State<LoginScreen> {
     if (tokens != null) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       await authProvider.login(tokens['access']!);
-      if (!mounted) return;
-      context.go('/dashboard');
+      if (mounted) {
+        context.go('/dashboard');
+      }
     } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to login')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to login. Please check credentials.')),
+        );
+      }
     }
   }
 
@@ -155,3 +172,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+

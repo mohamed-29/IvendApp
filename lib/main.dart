@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -59,6 +58,7 @@ class MyApp extends StatelessWidget {
             title: 'iVend Dashboard',
             theme: _buildTheme(context),
             routerConfig: router,
+            debugShowCheckedModeBanner: false,
           );
         },
       ),
@@ -128,3 +128,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

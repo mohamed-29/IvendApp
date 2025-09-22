@@ -1,5 +1,3 @@
-
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -41,7 +39,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go("/"); // This will pop the current screen off the stack
+            context.go("/dashboard");
           },
         ),
         title: Text(
@@ -90,14 +88,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.machine.name,
-              style: GoogleFonts.roboto(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
             const SizedBox(height: 8),
             _buildDetailRow('Machine Number', widget.machine.machineNumber, Icons.qr_code_scanner),
             _buildDetailRow('Temperature', '${widget.machine.temperature}°C', Icons.thermostat),
@@ -130,7 +120,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               elevation: 4,
-              shadowColor: Color.fromRGBO(0, 0, 0, 0.1),
+              shadowColor: const Color.fromRGBO(0, 0, 0, 0.1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -260,3 +250,4 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 }
+
