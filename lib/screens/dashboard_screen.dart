@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:myapp/screens/restock_screen.dart';
 import 'package:myapp/utils/time_ago.dart';
 import 'package:provider/provider.dart';
 import 'package:myapp/api/api_service.dart';
@@ -122,6 +123,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Icons.memory,
               Colors.blue.shade700,
               Colors.blue.shade200,
+              () {},
             ),
             _buildStatCard(
               'Online',
@@ -129,6 +131,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Icons.check_circle,
               Colors.green.shade700,
               Colors.green.shade200,
+              () {},
             ),
             _buildStatCard(
               'Offline',
@@ -136,6 +139,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Icons.cancel,
               Colors.red.shade700,
               Colors.red.shade200,
+              () {},
             ),
             _buildStatCard(
               'To Restock',
@@ -143,6 +147,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Icons.warning,
               Colors.orange.shade700,
               Colors.orange.shade200,
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        RestockScreen(shortageProducts: stats.shortageProducts),
+                  ),
+                );
+              },
             ),
           ],
         );
@@ -180,7 +193,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: ExpansionTile(
                 leading: Icon(
                   machine.isOnline ? Icons.power_settings_new : Icons.power_off,
-                  color: machine.isOnline ? Colors.green.shade600 : Colors.red.shade600,
+                  color: machine.isOnline
+                      ? Colors.green.shade600
+                      : Colors.red.shade600,
                 ),
                 title: Text(
                   machine.name,
@@ -192,7 +207,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 subtitle: Text(
                   'Last updated: ${timeAgo(machine.lastUpdate)}',
-                  style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade600),
+                  style: GoogleFonts.inter(
+                      fontSize: 12, color: Colors.grey.shade600),
                 ),
                 trailing: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -209,26 +225,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       machine.isOnline ? 'Online' : 'Offline',
                       style: GoogleFonts.inter(
                         fontSize: 12,
-                        color: machine.isOnline ? Colors.green.shade600 : Colors.red.shade600,
+                        color: machine.isOnline
+                            ? Colors.green.shade600
+                            : Colors.red.shade600,
                       ),
                     ),
                   ],
                 ),
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Column(
                       children: [
-                        _buildDetailRow('Machine Number', machine.machineNumber, Icons.qr_code),
-                        _buildDetailRow('Temperature', '${machine.temperature}°C', Icons.thermostat),
-                        _buildDetailRow('Status', machine.isOnline ? 'Online' : 'Offline', machine.isOnline ? Icons.check_circle : Icons.cancel),
+                        _buildDetailRow(
+                            'Machine Number', machine.machineNumber, Icons.qr_code),
+                        _buildDetailRow('Temperature',
+                            '${machine.temperature}°C', Icons.thermostat),
+                        _buildDetailRow(
+                            'Status',
+                            machine.isOnline ? 'Online' : 'Offline',
+                            machine.isOnline
+                                ? Icons.check_circle
+                                : Icons.cancel),
                         const SizedBox(height: 16),
                         ElevatedButton.icon(
                           onPressed: () {
                             context.go('/products', extra: machine);
                           },
                           icon: const Icon(Icons.inventory_2),
-                          label: Text('View Products', style: GoogleFonts.inter()),
+                          label:
+                              Text('View Products', style: GoogleFonts.inter()),
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size(double.infinity, 45),
                             shape: RoundedRectangleBorder(
@@ -254,6 +281,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     IconData icon,
     Color startColor,
     Color endColor,
+    VoidCallback onTap,
   ) {
     return Card(
       elevation: 6,
@@ -261,45 +289,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          gradient: LinearGradient(
-            colors: [startColor.withOpacity(0.8), endColor.withOpacity(0.8)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(15),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            gradient: LinearGradient(
+              colors: [startColor.withOpacity(0.8), endColor.withOpacity(0.8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w500,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  Icon(icon, color: Colors.white, size: 28),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                value,
-                style: GoogleFonts.oswald(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                    Icon(icon, color: Colors.white, size: 28),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+                Text(
+                  value,
+                  style: GoogleFonts.oswald(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -315,7 +347,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           const SizedBox(width: 12),
           Text(
             '$label: ',
-            style: GoogleFonts.inter(fontWeight: FontWeight.w500, color: Colors.black87),
+            style:
+                GoogleFonts.inter(fontWeight: FontWeight.w500, color: Colors.black87),
           ),
           Expanded(
             child: Text(
@@ -329,4 +362,3 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
-
